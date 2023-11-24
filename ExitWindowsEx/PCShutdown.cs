@@ -1,68 +1,83 @@
 ﻿using static Enums;
+using System;
 
 namespace ExitWindowsEx
 {
     /// <summary>
-    /// Struktura pro řízení různých operací ukončení systému na PC.
+    /// Struct for controlling various system shutdown operations on a PC.
     /// </summary>
     public struct PCShutdown
     {
         /// <summary>
-        /// Provede odhlášení (LogOff) na PC.
+        /// Logs off the PC.
         /// </summary>
-        public static void LogOff() => ApiBase.Execute(ExitWindows.LogOff, "LogOff");
+        public static void LogOff() => ExecuteSafe(ExitWindows.LogOff, "LogOff");
 
         /// <summary>
-        /// Vypne PC.
+        /// Shuts down the PC.
         /// </summary>
-        public static void ShutDown() => ApiBase.Execute(ExitWindows.ShutDown, "ShutDown");
+        public static void ShutDown() => ExecuteSafe(ExitWindows.ShutDown, "ShutDown");
 
         /// <summary>
-        /// Restartuje PC.
+        /// Restarts the PC.
         /// </summary>
-        public static void Reboot() => ApiBase.Execute(ExitWindows.Reboot, "Reboot");
+        public static void Reboot() => ExecuteSafe(ExitWindows.Reboot, "Reboot");
 
         /// <summary>
-        /// Vypne napájení PC (Power Off).
+        /// Powers off the PC.
         /// </summary>
-        public static void PowerOff() => ApiBase.Execute(ExitWindows.PowerOff, "PowerOff");
+        public static void PowerOff() => ExecuteSafe(ExitWindows.PowerOff, "PowerOff");
 
         /// <summary>
-        /// Restartuje aplikace a procesy na PC.
+        /// Restarts applications and processes on the PC.
         /// </summary>
-        public static void RestartApps() => ApiBase.Execute(ExitWindows.RestartApps, "RestartApps");
+        public static void RestartApps() => ExecuteSafe(ExitWindows.RestartApps, "RestartApps");
 
         /// <summary>
-        /// Spustí hybridní režim na PC.
+        /// Starts the hybrid mode on the PC.
         /// </summary>
-        public static void Hybrid() => ApiBase.Execute(ExitWindows.Hybrid, "Hybrid");
+        public static void Hybrid() => ExecuteSafe(ExitWindows.Hybrid, "Hybrid");
 
         /// <summary>
-        /// Pokusí se spustit hybridní režim, pokud selže, provede vypnutí PC.
+        /// Tries to start the hybrid mode; if it fails, shuts down the PC.
         /// </summary>
-        /// <returns>True, pokud byl hybridní režim spuštěn úspěšně; jinak false.</returns>
+        /// <returns>True if the hybrid mode was started successfully; otherwise, false.</returns>
         public static bool TryHybrid()
         {
             try
             {
-                ApiBase.Execute(ExitWindows.Hybrid, "Hybrid");
+                ExecuteSafe(ExitWindows.Hybrid, "Hybrid");
                 return true;
             }
             catch
             {
-                ApiBase.Execute(ExitWindows.ShutDown, "ShutDown");
+                ExecuteSafe(ExitWindows.ShutDown, "ShutDown");
                 return false;
             }
         }
 
         /// <summary>
-        /// Vynutí ukončení aplikací a procesů a následné vypnutí PC.
+        /// Forces the termination of applications and processes, followed by shutting down the PC.
         /// </summary>
-        public static void Force() => ApiBase.Execute(ExitWindows.Force, "Force");
+        public static void Force() => ExecuteSafe(ExitWindows.Force, "Force");
 
         /// <summary>
-        /// Vynutí ukončení aplikací a procesů, pokud jsou zamrzlé, a následné vypnutí PC.
+        /// Forces the termination of applications and processes if they are frozen, followed by shutting down the PC.
         /// </summary>
-        public static void ForceIfHung() => ApiBase.Execute(ExitWindows.ForceIfHung, "ForceIfHung");
+        public static void ForceIfHung() => ExecuteSafe(ExitWindows.ForceIfHung, "ForceIfHung");
+
+        // Execute a shutdown operation and handle exceptions
+        private static void ExecuteSafe(ExitWindows operation, string operationName)
+        {
+            try
+            {
+                ApiBase.Execute(operation, operationName);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error executing {operationName} operation: {ex.Message}");
+                // Add additional logging or error handling as needed
+            }
+        }
     }
 }

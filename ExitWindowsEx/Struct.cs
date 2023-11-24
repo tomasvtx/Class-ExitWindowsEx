@@ -3,55 +3,58 @@ using System.Runtime.InteropServices;
 
 namespace ExitWindowsEx
 {
-    internal class Struct
+    /// <summary>
+    /// Contains structures representing LUID (Locally Unique Identifier) and token privileges.
+    /// </summary>
+    internal class SecurityStructures
     {
         /// <summary>
-        /// Struktura reprezentující LUID (Lokální unikátní identifikátor).
+        /// Represents the LUID (Locally Unique Identifier).
         /// </summary>
-        internal struct Luid
+        internal struct LocallyUniqueIdentifier
         {
             /// <summary>
-            /// Dolní část LUID
+            /// The low part of the LUID.
             /// </summary>
             internal uint LowPart;
 
             /// <summary>
-            /// Horní část LUID
+            /// The high part of the LUID.
             /// </summary>
-            internal int HighPart;  
+            internal int HighPart;
         }
 
         /// <summary>
-        /// Struktura reprezentující LUID a atributy.
+        /// Represents the combination of LUID and attributes.
         /// </summary>
-        internal struct LUIDAttributes
+        internal struct LuidAttributes
         {
             /// <summary>
-            /// LUID (Lokální unikátní identifikátor)
+            /// The LUID (Locally Unique Identifier).
             /// </summary>
-            internal Luid Luid;
+            internal LocallyUniqueIdentifier Luid;
 
             /// <summary>
-            /// Atributy
+            /// The attributes.
             /// </summary>
-            internal uint Attributes; 
+            internal uint Attributes;
         }
 
         /// <summary>
-        /// Struktura reprezentující oprávnění v procesním tokenu.
+        /// Represents the privileges in the process token.
         /// </summary>
         internal struct TokenPrivileges
         {
             /// <summary>
-            /// Počet oprávnění
+            /// The count of privileges.
             /// </summary>
             public uint PrivilegeCount;
 
             /// <summary>
-            /// Pole oprávnění
+            /// An array of privileges.
             /// </summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 1)]
-            public LUIDAttributes[] Privileges;  
+            public LuidAttributes[] Privileges;
         }
     }
 }

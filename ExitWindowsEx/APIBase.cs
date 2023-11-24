@@ -7,25 +7,25 @@ using System;
 namespace ExitWindowsEx
 {
     /// <summary>
-    /// Základní struktura pro vykonávání operací ukončení systému.
+    /// Basic structure for executing system shutdown operations.
     /// </summary>
     internal struct ApiBase
     {
         /// <summary>
-        /// Spustí operaci ukončení systému s danými parametry.
+        /// Executes the system shutdown operation with the specified parameters.
         /// </summary>
-        /// <param name="uFlags">Typ operace ukončení systému.</param>
-        /// <param name="proces">Název procesu spojený s operací.</param>
-        internal static void Execute(ExitWindows uFlags, string proces)
+        /// <param name="uFlags">Type of system shutdown operation.</param>
+        /// <param name="process">Process name associated with the operation.</param>
+        internal static void Execute(ExitWindows uFlags, string process)
         {
             IntPtr tokenHandle = IntPtr.Zero;
 
             try
             {
-                // Otevře token procesu, který reprezentuje oprávnění a atributy procesu.
+                // Opens the process token representing the process's permissions and attributes.
                 if (!Dll.OpenProcessToken(Process.GetCurrentProcess().Handle, 40u, out tokenHandle))
                 {
-                    throw new Win32Exception(Marshal.GetLastWin32Error(), "Nepodařilo se otevřít token procesu.");
+                    throw new Win32Exception(Marshal.GetLastWin32Error(), "Failed to open the process token.");
                 }
 
                 Struct.TokenPrivileges tokenPrivileges = default;
@@ -34,33 +34,32 @@ namespace ExitWindowsEx
                 Struct.TokenPrivileges newState = tokenPrivileges;
                 newState.Privileges[0].Attributes = 2u;
 
-                // Získá hodnotu oprávnění (LUID) pro dané oprávnění.
+                // Retrieves the privilege value (LUID) for the specified privilege.
                 if (!Dll.LookupPrivilegeValue(null, "SeShutdownPrivilege", out newState.Privileges[0].Luid))
                 {
-                    throw new Win32Exception(Marshal.GetLastWin32Error(), "Nepodařilo se získat hodnotu oprávnění.");
+                    throw new Win32Exception(Marshal.GetLastWin32Error(), "Failed to retrieve the privilege value.");
                 }
 
-                // Upraví oprávnění v procesním tokenu.
+                // Modifies the privileges in the process token.
                 if (!Dll.AdjustTokenPrivileges(tokenHandle, false, ref newState, 0u, IntPtr.Zero, IntPtr.Zero))
                 {
-                    throw new Win32Exception(Marshal.GetLastWin32Error(), "Nepodařilo se upravit oprávnění v procesním tokenu.");
+                    throw new Win32Exception(Marshal.GetLastWin32Error(), "Failed to adjust privileges in the process token.");
                 }
 
-                // Spustí operaci ukončení systému.
+                // Executes the system shutdown operation.
                 if (!Dll.ExitWindowsEx(uFlags, ShutdownReason.MajorApplication | ShutdownReason.MinorInstallation | ShutdownReason.FlagPlanned))
                 {
-                    throw new Win32Exception(Marshal.GetLastWin32Error(), $"Nepodařilo se provést operaci {proces} systému.");
+                    throw new Win32Exception(Marshal.GetLastWin32Error(), $"Failed to perform the {process} system operation.");
                 }
             }
             finally
             {
-                // Uzavře otevřený objekt (token).
+                // Closes the opened object (token).
                 if (tokenHandle != IntPtr.Zero)
                 {
                     Dll.CloseHandle(tokenHandle);
                 }
             }
-
         }
     }
 }

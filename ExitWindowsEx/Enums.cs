@@ -1,11 +1,12 @@
 ﻿using System;
+
 /// <summary>
-/// Obsahuje výčty reprezentující hodnoty pro operace ukončení systému a důvody ukončení.
+/// Contains enumerations representing values for system shutdown operations and reasons.
 /// </summary>
 internal struct Enums
 {
     /// <summary>
-    /// Výčet pro operace ukončení systému, které mohou být volány metodou ExitWindowsEx.
+    /// Enumeration for system shutdown operations that can be called by the ExitWindowsEx method.
     /// </summary>
     [Flags]
     internal enum ExitWindows : uint
@@ -21,7 +22,7 @@ internal struct Enums
     }
 
     /// <summary>
-    /// Výčet reprezentující důvody ukončení systému, které lze použít s metodou ExitWindowsEx.
+    /// Enumeration representing reasons for system shutdown that can be used with the ExitWindowsEx method.
     /// </summary>
     internal enum ShutdownReason : uint
     {

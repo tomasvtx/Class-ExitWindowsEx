@@ -5,63 +5,63 @@ using static Enums;
 namespace ExitWindowsEx
 {
     /// <summary>
-    /// Poskytuje metody pro volání operací ukončení systému, správu tokenů procesu a práci s oprávněními.
+    /// Provides methods for calling system shutdown operations, managing process tokens, and working with privileges.
     /// </summary>
     internal struct Dll
     {
         /// <summary>
-        /// exitWindowsEx - Volá operace pro ukončení systému (např. vypnout nebo restartovat).
+        /// Calls the system shutdown operations (e.g., shutdown or restart).
         /// </summary>
-        /// <param name="uFlags"></param>
-        /// <param name="dwReason"></param>
-        /// <returns></returns>
+        /// <param name="uFlags">The type of system shutdown operation.</param>
+        /// <param name="dwReason">The shutdown reason.</param>
+        /// <returns>Returns true if the operation is successful; otherwise, false.</returns>
         [DllImport("user32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool ExitWindowsEx(ExitWindows uFlags, Enums.ShutdownReason dwReason);
 
         /// <summary>
-        /// openProcessToken - Otevře token procesu, který reprezentuje oprávnění a atributy procesu.
+        /// Opens the process token, which represents the permissions and attributes of the process.
         /// </summary>
-        /// <param name="ProcessHandle"></param>
-        /// <param name="DesiredAccess"></param>
-        /// <param name="TokenHandle"></param>
-        /// <returns></returns>
+        /// <param name="processHandle">The process handle.</param>
+        /// <param name="desiredAccess">The desired access.</param>
+        /// <param name="tokenHandle">The resulting token handle.</param>
+        /// <returns>Returns true if successful; otherwise, false.</returns>
         [DllImport("advapi32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        internal static extern bool OpenProcessToken(IntPtr ProcessHandle, uint DesiredAccess, out IntPtr TokenHandle);
+        internal static extern bool OpenProcessToken(IntPtr processHandle, uint desiredAccess, out IntPtr tokenHandle);
 
         /// <summary>
-        /// lookupPrivilegeValue - Získá hodnotu oprávnění (LUID) pro dané oprávnění.
+        /// Retrieves the privilege value (LUID) for the specified privilege.
         /// </summary>
-        /// <param name="lpSystemName"></param>
-        /// <param name="lpName"></param>
-        /// <param name="lpLuid"></param>
-        /// <returns></returns>
+        /// <param name="systemName">The system name.</param>
+        /// <param name="name">The privilege name.</param>
+        /// <param name="luid">The resulting LUID.</param>
+        /// <returns>Returns true if successful; otherwise, false.</returns>
         [DllImport("advapi32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        internal static extern bool LookupPrivilegeValue(string lpSystemName, string lpName, out Struct.Luid lpLuid);
+        internal static extern bool LookupPrivilegeValue(string systemName, string name, out Struct.Luid luid);
 
         /// <summary>
-        /// closeHandle - Uzavře otevřený objekt (např. token).
+        /// Closes the opened object (e.g., token).
         /// </summary>
-        /// <param name="hObject"></param>
-        /// <returns></returns>
+        /// <param name="handle">The handle to the object to be closed.</param>
+        /// <returns>Returns true if successful; otherwise, false.</returns>
         [DllImport("kernel32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        internal static extern bool CloseHandle(IntPtr hObject);
+        internal static extern bool CloseHandle(IntPtr handle);
 
         /// <summary>
-        /// adjustTokenPrivileges - Upraví oprávnění v procesním tokenu.
+        /// Adjusts privileges in the process token.
         /// </summary>
-        /// <param name="TokenHandle"></param>
-        /// <param name="DisableAllPrivileges"></param>
-        /// <param name="NewState"></param>
-        /// <param name="Zero"></param>
-        /// <param name="Null1"></param>
-        /// <param name="Null2"></param>
-        /// <returns></returns>
+        /// <param name="tokenHandle">The process token handle.</param>
+        /// <param name="disableAllPrivileges">A flag indicating whether to disable all privileges.</param>
+        /// <param name="newState">The new state of privileges.</param>
+        /// <param name="zero">Reserved; set to zero.</param>
+        /// <param name="null1">Reserved; set to IntPtr.Zero.</param>
+        /// <param name="null2">Reserved; set to IntPtr.Zero.</param>
+        /// <returns>Returns true if successful; otherwise, false.</returns>
         [DllImport("advapi32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        internal static extern bool AdjustTokenPrivileges(IntPtr TokenHandle, [MarshalAs(UnmanagedType.Bool)] bool DisableAllPrivileges, ref Struct.TokenPrivileges NewState, uint Zero, IntPtr Null1, IntPtr Null2);
+        internal static extern bool AdjustTokenPrivileges(IntPtr tokenHandle, [MarshalAs(UnmanagedType.Bool)] bool disableAllPrivileges, ref Struct.TokenPrivileges newState, uint zero, IntPtr null1, IntPtr null2);
     }
 }
