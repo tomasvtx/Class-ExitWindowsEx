@@ -39,7 +39,7 @@ namespace ExitWindowsEx
         /// <returns>Returns true if successful; otherwise, false.</returns>
         [DllImport("advapi32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        internal static extern bool LookupPrivilegeValue(string systemName, string name, out Struct.Luid luid);
+        internal static extern bool LookupPrivilegeValue(string systemName, string name, out SecurityStructures.LocallyUniqueIdentifier luid);
 
         /// <summary>
         /// Closes the opened object (e.g., token).
@@ -62,6 +62,6 @@ namespace ExitWindowsEx
         /// <returns>Returns true if successful; otherwise, false.</returns>
         [DllImport("advapi32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        internal static extern bool AdjustTokenPrivileges(IntPtr tokenHandle, [MarshalAs(UnmanagedType.Bool)] bool disableAllPrivileges, ref Struct.TokenPrivileges newState, uint zero, IntPtr null1, IntPtr null2);
+        internal static extern bool AdjustTokenPrivileges(IntPtr tokenHandle, [MarshalAs(UnmanagedType.Bool)] bool disableAllPrivileges, ref SecurityStructures.TokenPrivileges newState, uint zero, IntPtr null1, IntPtr null2);
     }
 }

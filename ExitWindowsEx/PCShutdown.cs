@@ -4,7 +4,7 @@ using System;
 namespace ExitWindowsEx
 {
     /// <summary>
-    /// Struct for controlling various system shutdown operations on a PC.
+    /// SecurityStructures for controlling various system shutdown operations on a PC.
     /// </summary>
     public struct PCShutdown
     {
